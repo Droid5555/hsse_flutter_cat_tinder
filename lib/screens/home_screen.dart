@@ -5,6 +5,8 @@ import '../models/cat.dart';
 import '../models/cat_card.dart';
 import '../services/cat_service.dart';
 import 'detail_screen.dart';
+import '../widgets/like_button.dart';
+import '../widgets/dislike_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -199,18 +201,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Image.asset('assets/buttons/arrow.png'),
                     ),
                   ),
-                  FloatingActionButton.large(
+                  DislikeButton(
                     onPressed: () => controller.swipe(CardSwiperDirection.left),
-                    backgroundColor: Colors.transparent,
-                    shape: const CircleBorder(),
-                    child: Image.asset('assets/buttons/cross.png'),
                   ),
-                  FloatingActionButton.large(
+                  LikeButton(
                     onPressed:
                         () => controller.swipe(CardSwiperDirection.right),
-                    backgroundColor: Colors.transparent,
-                    shape: const CircleBorder(),
-                    child: Image.asset('assets/buttons/heart.png'),
                   ),
                   FloatingActionButton(
                     onPressed: _onInfoTap,

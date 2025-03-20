@@ -7,10 +7,11 @@ class DislikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return FloatingActionButton.large(
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-      child: const Icon(Icons.thumb_down),
+      backgroundColor: Colors.transparent,
+      shape: const CircleBorder(),
+      child: Image.asset('assets/buttons/cross.png'),
     );
   }
 }

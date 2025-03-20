@@ -7,10 +7,11 @@ class LikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return FloatingActionButton.large(
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-      child: const Icon(Icons.thumb_up),
+      backgroundColor: Colors.transparent,
+      shape: const CircleBorder(),
+      child: Image.asset('assets/buttons/heart.png'),
     );
   }
 }
