@@ -15,15 +15,16 @@ CaTinder - это лучшее приложение для любителей к
 
 ## Интерфейс приложения
 
-<div style="display: flex; justify-content: space-around;">
+<div style="display: flex; justify-content: space-evenly;">
   <img src="assets/screenshots/home.png" width="300" alt="Главный экран">
   <img src="assets/screenshots/swipe.png" width="300" alt="Cвайп главного экрана">
 </div>
 
-<div style="display: flex; justify-content: space-around;">
+<div style="display: flex; justify-content: space-evenly;">
   <img src="assets/screenshots/detail.png" width="300" alt="Экран с подробной информацией">
   <img src="assets/screenshots/swipe_detail.png" width="300" alt="Свайп доп инфы">
 </div>
+
 ## Скачивание
 
 [Скачать последнюю версию APK](https://disk.yandex.ru/d/RBCARTZCkKDqyA)
