@@ -1,0 +1,40 @@
+name: cat_tinder
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0        # Для HTTP-запросов к TheCatAPI
+  cached_network_image: ^3.3.1  # Для загрузки и кэширования изображений
+  cupertino_icons: ^1.0.8
+  flutter_card_swiper: ^7.0.2
+  flutter_launcher_icons: ^0.14.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icon/icon.png
+    - assets/buttons/cross.png
+    - assets/buttons/heart.png
+    - assets/buttons/arrow.png
+    - assets/buttons/info.png
+
+
