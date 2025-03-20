@@ -1,16 +1,27 @@
 # cat_tinder
 
-A new Flutter project.
+Новый проект на Flutter.
 
-## Getting Started
+## Описание проекта
 
-This project is a starting point for a Flutter application.
+CaTinder - это лучшее приложение для любителей кошек! Здесь пользователи могут просматривать фотографии кошек, 
+ставить лайки или дизлайки, просматривать подробную информацию и отменять последний лайк или дизлайк. Также сверху видно счётчик лайков и дизлайков и лайков.
+Приложение выполнено в минималистичном дизайне с простыми иконками и решениями.
 
-A few resources to get you started if this is your first Flutter project:
+## Реализованные функции
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Просмотр фотографий кошек (свайп или использование кнопок)
+- Лайк или дизлайк кошек
+- Просмотр подробной информации о каждой кошке на кнопку "вопрос" или по нажатию на карточку
+- Отмена последнего лайка или дизлайка
+- Счетчики лайков и дизлайков
+- Динамическое состояние кнопки отмены
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Интерфейс приложения
+
+![Главный экран](assets/screenshots/home.png)
+![Экран с подробной информацией](assets/screenshots/detail.png)
+
+## Скачивание
+
+[Скачать последнюю версию APK](https://disk.yandex.ru/d/RBCARTZCkKDqyA)
