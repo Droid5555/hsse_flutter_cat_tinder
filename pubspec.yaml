@@ -11,11 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.2.0        # Для HTTP-запросов к TheCatAPI
-  cached_network_image: ^3.3.1  # Для загрузки и кэширования изображений
+  http: ^1.2.0
+  cached_network_image: ^3.3.1
   cupertino_icons: ^1.0.8
   flutter_card_swiper: ^7.0.2
   flutter_launcher_icons: ^0.14.3
+  flutter_bloc: ^9.1.0
+  get_it: ^8.0.3
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

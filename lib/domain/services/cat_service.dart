@@ -1,7 +1,6 @@
-// lib/services/cat_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/cat.dart';
+import '../../data/models/cat.dart';
 
 class CatService {
   static const String apiKey = 'live_m4eU8d8o2QkryB1715g02aEt0sgl8Qiaf168ZLYWLt0dN6qx4IJZuRTC6gY6RrhF';

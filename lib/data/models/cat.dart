@@ -5,6 +5,7 @@ class Cat {
   final String description;
   final String origin;
   final String temperament;
+  final DateTime? likedAt;
 
   Cat({
     required this.id,
@@ -13,6 +14,7 @@ class Cat {
     required this.description,
     required this.origin,
     required this.temperament,
+    this.likedAt,
   });
 
   factory Cat.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,18 @@ class Cat {
       description: breed != null ? breed['description'] : 'No description available',
       origin: breed != null ? breed['origin'] : 'Unknown',
       temperament: breed != null ? breed['temperament'] : 'Unknown',
+    );
+  }
+
+  Cat copyWith({DateTime? likedAt}) {
+    return Cat(
+      id: id,
+      url: url,
+      breedName: breedName,
+      description: description,
+      origin: origin,
+      temperament: temperament,
+      likedAt: likedAt ?? this.likedAt,
     );
   }
 }
