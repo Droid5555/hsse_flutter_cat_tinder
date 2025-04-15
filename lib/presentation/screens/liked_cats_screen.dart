@@ -47,7 +47,7 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
             children: [
               if (_showFilter && state.breeds.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
                   child: DropdownButton<String>(
                     hint: const Text('Фильтр по породе'),
                     value: state.selectedBreed,

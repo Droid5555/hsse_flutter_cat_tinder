@@ -4,6 +4,7 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'dart:ui';
 import '../../data/models/cat.dart';
 import '../../domain/services/cat_service.dart';
+import '../blocs/liked_cats/liked_cats_state.dart';
 import '../widgets/cat_card.dart';
 import '../widgets/like_button.dart';
 import '../widgets/dislike_button.dart';
@@ -24,7 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _bufferSize = 10;
   bool isLastLike = false;
   int _index = 0;
-  int likeCount = 0;
   int dislikeCount = 0;
   final CardSwiperController controller = CardSwiperController();
   String? _error;
@@ -83,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onLike() {
     setState(() {
-      likeCount++;
       isLastLike = true;
     });
     context.read<LikedCatsCubit>().addLikedCat(_catBuffer[_index]);
@@ -98,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onUndo() {
     if (isLastLike) {
-      likeCount--;
       context.read<LikedCatsCubit>().removeLikedCat(_swipedCat.last.id);
     } else {
       dislikeCount--;
@@ -183,28 +181,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const Spacer(),
-            Row(
-              children: [
-                const Icon(Icons.thumb_up, color: Colors.green),
-                const SizedBox(width: 5),
-                Text('$likeCount'),
-                const SizedBox(width: 20),
-                const Icon(Icons.thumb_down, color: Colors.red),
-                const SizedBox(width: 5),
-                Text('$dislikeCount'),
-                const SizedBox(width: 20),
-                IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const LikedCatsScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ],
+            BlocBuilder<LikedCatsCubit, LikedCatsState>(
+              builder: (context, state) {
+                return Row(
+                  children: [
+                    const Icon(Icons.thumb_up, color: Colors.green),
+                    const SizedBox(width: 5),
+                    Text('${state.cats.length}'),
+                    const SizedBox(width: 20),
+                    const Icon(Icons.thumb_down, color: Colors.red),
+                    const SizedBox(width: 5),
+                    Text('$dislikeCount'),
+                    const SizedBox(width: 20),
+                    IconButton(
+                      icon: const Icon(Icons.menu, color: Colors.black),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LikedCatsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
