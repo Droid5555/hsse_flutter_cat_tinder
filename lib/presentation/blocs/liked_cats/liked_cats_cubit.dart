@@ -58,7 +58,7 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
       state.copyWith(
         cats: newCats,
         breeds: newBreeds,
-        selectedBreed: newBreeds.contains(breed) ? breed : null,
+        selectedBreed: breed,
       ),
     );
   }

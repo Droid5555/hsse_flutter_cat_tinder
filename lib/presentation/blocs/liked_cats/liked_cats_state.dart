@@ -19,7 +19,7 @@ class LikedCatsState {
     return LikedCatsState(
       cats: cats ?? this.cats,
       breeds: breeds ?? this.breeds,
-      selectedBreed: selectedBreed ?? this.selectedBreed,
+      selectedBreed: selectedBreed,
     );
   }
 }

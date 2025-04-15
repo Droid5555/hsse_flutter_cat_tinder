@@ -5,33 +5,49 @@ import 'package:intl/intl.dart';
 import '../blocs/liked_cats/liked_cats_cubit.dart';
 import '../blocs/liked_cats/liked_cats_state.dart';
 
-class LikedCatsScreen extends StatelessWidget {
+class LikedCatsScreen extends StatefulWidget {
   const LikedCatsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    context.read<LikedCatsCubit>().loadLikedCats();
+  State<LikedCatsScreen> createState() => _LikedCatsScreenState();
+}
 
+class _LikedCatsScreenState extends State<LikedCatsScreen> {
+  bool _showFilter = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<LikedCatsCubit>().loadLikedCats();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'История лайков',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt),
+            onPressed: () {
+              setState(() => _showFilter = !_showFilter);
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<LikedCatsCubit, LikedCatsState>(
         builder: (context, state) {
           return Column(
             children: [
-              if (state.breeds.isNotEmpty)
+              if (_showFilter && state.breeds.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: DropdownButton<String>(
                     hint: const Text('Фильтр по породе'),
-                    value:
-                        state.breeds.contains(state.selectedBreed)
-                            ? state.selectedBreed
-                            : null,
+                    value: state.selectedBreed,
                     isExpanded: true,
                     items: [
                       const DropdownMenuItem<String>(
@@ -40,7 +56,7 @@ class LikedCatsScreen extends StatelessWidget {
                           children: [
                             Icon(Icons.pets, color: Colors.red),
                             SizedBox(width: 8),
-                            Text('Все породы'),
+                            Text('Все породы', style: TextStyle(fontSize: 20)),
                           ],
                         ),
                       ),
@@ -51,7 +67,7 @@ class LikedCatsScreen extends StatelessWidget {
                             children: [
                               const Icon(Icons.pets, color: Colors.red),
                               const SizedBox(width: 8),
-                              Text(breed),
+                              Text(breed, style: const TextStyle(fontSize: 20)),
                             ],
                           ),
                         ),
@@ -85,47 +101,81 @@ class LikedCatsScreen extends StatelessWidget {
                                 );
                               },
                               background: Container(
-                                color: Colors.red,
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withValues(alpha: .2),
+                                ),
                                 alignment: Alignment.centerRight,
                                 padding: const EdgeInsets.only(right: 20),
                                 child: const Icon(
                                   Icons.delete,
-                                  color: Colors.black,
+                                  color: Colors.grey,
                                 ),
                               ),
-                              child: ListTile(
-                                leading: SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: CachedNetworkImage(
-                                    imageUrl: cat.url,
-                                    placeholder:
-                                        (context, url) => const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                    errorWidget:
-                                        (context, url, error) =>
-                                            const Icon(Icons.error),
-                                    height: double.infinity,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                              child: Container(
+                                clipBehavior: Clip.hardEdge,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 2,
                                 ),
-                                title: Text(
-                                  cat.breedName,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 1.5,
                                   ),
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: .2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                subtitle: Text(
-                                  DateFormat(
-                                    'dd/MM/yyyy hh:mm',
-                                  ).format(cat.likedAt!),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: cat.url,
+                                      width: 130,
+                                      height: 90,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          (context, url) => const SizedBox(
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) =>
+                                              const Icon(Icons.error),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            cat.breedName,
+                                            style: const TextStyle(
+                                              fontSize: 23,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            DateFormat(
+                                              'dd/MM/yyyy HH:mm',
+                                            ).format(cat.likedAt!),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
