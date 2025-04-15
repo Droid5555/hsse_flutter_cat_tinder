@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../blocs/liked_cats/liked_cats_cubit.dart';
 import '../blocs/liked_cats/liked_cats_state.dart';
-import '../widgets/cat_card.dart';
 
 class LikedCatsScreen extends StatelessWidget {
   const LikedCatsScreen({super.key});
@@ -24,51 +23,52 @@ class LikedCatsScreen extends StatelessWidget {
         builder: (context, state) {
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: DropdownButton<String>(
-                  hint: const Text('Фильтр по породе'),
-                  value: state.selectedBreed,
-                  isExpanded: true,
-                  items: [
-                    const DropdownMenuItem<String>(
-                      value: null,
-                      child: Row(
-                        children: [
-                          Icon(Icons.pets, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Text('Все породы'),
-                        ],
-                      ),
-                    ),
-                    ...state.breeds.map(
-                      (breed) => DropdownMenuItem<String>(
-                        value: breed,
+              if (state.breeds.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: DropdownButton<String>(
+                    hint: const Text('Фильтр по породе'),
+                    value:
+                        state.breeds.contains(state.selectedBreed)
+                            ? state.selectedBreed
+                            : null,
+                    isExpanded: true,
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
                         child: Row(
                           children: [
-                            const Icon(Icons.pets, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text(breed),
+                            Icon(Icons.pets, color: Colors.red),
+                            SizedBox(width: 8),
+                            Text('Все породы'),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    context.read<LikedCatsCubit>().filterByBreed(value);
-                  },
+                      ...state.breeds.map(
+                        (breed) => DropdownMenuItem<String>(
+                          value: breed,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.pets, color: Colors.red),
+                              const SizedBox(width: 8),
+                              Text(breed),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      context.read<LikedCatsCubit>().filterByBreed(value);
+                    },
+                  ),
                 ),
-              ),
               Expanded(
                 child:
                     state.cats.isEmpty
                         ? const Center(
                           child: Text(
-                            'Никакой котик тебе не понравился:(',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            'Никакой котик тебе не понравился :(',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         )
                         : ListView.builder(
@@ -76,11 +76,12 @@ class LikedCatsScreen extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final cat = state.cats[index];
                             return Dismissible(
-                              key: Key(cat.id),
+                              key: ValueKey('${cat.id}_$index'),
                               direction: DismissDirection.endToStart,
                               onDismissed: (_) {
                                 context.read<LikedCatsCubit>().removeLikedCat(
                                   cat.id,
+                                  selectedBreed: state.selectedBreed,
                                 );
                               },
                               background: Container(
@@ -97,7 +98,7 @@ class LikedCatsScreen extends StatelessWidget {
                                   width: 100,
                                   height: 100,
                                   child: CachedNetworkImage(
-                                    imageUrl: CatCard(cat).candidate.url,
+                                    imageUrl: cat.url,
                                     placeholder:
                                         (context, url) => const Center(
                                           child: CircularProgressIndicator(),

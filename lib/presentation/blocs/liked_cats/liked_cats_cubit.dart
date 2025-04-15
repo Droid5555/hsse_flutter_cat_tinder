@@ -9,24 +9,57 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
   LikedCatsCubit(this.repository) : super(const LikedCatsState());
 
   void loadLikedCats() {
-    emit(state.copyWith(cats: repository.getLikedCats(), breeds: repository.getBreeds()));
+    final cats = repository.getLikedCats();
+    final breeds = repository.getBreeds();
+    emit(state.copyWith(cats: cats, breeds: breeds, selectedBreed: null));
   }
 
   void addLikedCat(Cat cat) {
     repository.addLikedCat(cat);
-    emit(state.copyWith(cats: repository.getLikedCats(), breeds: repository.getBreeds()));
+    final cats = repository.getLikedCats();
+    final breeds = repository.getBreeds();
+    emit(
+      state.copyWith(
+        cats:
+            state.selectedBreed != null
+                ? repository.filterByBreed(state.selectedBreed)
+                : cats,
+        breeds: breeds,
+      ),
+    );
   }
 
-  void removeLikedCat(String id) {
+  void removeLikedCat(String id, {String? selectedBreed}) {
     repository.removeLikedCat(id);
-    emit(state.copyWith(cats: repository.getLikedCats(), breeds: repository.getBreeds()));
+    final newCats = repository.getLikedCats();
+    final newBreeds = repository.getBreeds();
+
+    String? updatedSelectedBreed = selectedBreed;
+    if (selectedBreed != null && !newBreeds.contains(selectedBreed)) {
+      updatedSelectedBreed = null;
+    }
+
+    emit(
+      state.copyWith(
+        cats:
+            updatedSelectedBreed != null
+                ? repository.filterByBreed(updatedSelectedBreed)
+                : newCats,
+        breeds: newBreeds,
+        selectedBreed: updatedSelectedBreed,
+      ),
+    );
   }
 
   void filterByBreed(String? breed) {
-    emit(state.copyWith(
-      cats: repository.filterByBreed(breed),
-      selectedBreed: breed,
-      breeds: repository.getBreeds(),
-    ));
+    final newCats = repository.filterByBreed(breed);
+    final newBreeds = repository.getBreeds();
+    emit(
+      state.copyWith(
+        cats: newCats,
+        breeds: newBreeds,
+        selectedBreed: newBreeds.contains(breed) ? breed : null,
+      ),
+    );
   }
 }
