@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/cat.dart';
-import '../../../data/repositories/liked_cats_repository.dart';
+import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
 import 'liked_cats_state.dart';
 
 class LikedCatsCubit extends Cubit<LikedCatsState> {

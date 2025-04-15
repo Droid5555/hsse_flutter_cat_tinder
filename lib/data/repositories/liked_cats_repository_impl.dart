@@ -1,16 +1,5 @@
-import '../models/cat.dart';
-
-abstract class LikedCatsRepository {
-  List<Cat> getLikedCats();
-
-  void addLikedCat(Cat cat);
-
-  void removeLikedCat(String id);
-
-  List<Cat> filterByBreed(String? breed);
-
-  List<String> getBreeds();
-}
+import 'package:cat_tinder/data/models/cat.dart';
+import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
 
 class LikedCatsRepositoryImpl implements LikedCatsRepository {
   final List<Cat> _likedCats = [];
