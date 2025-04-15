@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int likeCount = 0;
   int dislikeCount = 0;
   final CardSwiperController controller = CardSwiperController();
-  bool _isLoading = false;
   String? _error;
 
   @override
@@ -37,33 +36,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadInitialCats() async {
-    setState(() => _isLoading = true);
     try {
       final cats = await CatService().fetchRandomCats(_bufferSize);
       setState(() {
         _catBuffer.addAll(cats);
-        _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _isLoading = false;
-        _error = 'Network error: Failed to load cats';
+        _error = 'Котики не найдены. Проверьте подключение к интернету.';
       });
     }
   }
 
   void _loadCat(int index) async {
-    setState(() => _isLoading = true);
     try {
       final cats = await CatService().fetchRandomCats(1);
       setState(() {
         _catBuffer[index] = cats[0];
-        _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _isLoading = false;
-        _error = 'Network error: Failed to load cat';
+        _error = 'Котики не найдены. Проверьте подключение к интернету.';
       });
     }
   }
@@ -121,18 +114,19 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Stack(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(color: Colors.black.withValues(alpha: 0.5)),
-            ),
+      builder:
+          (context) => Stack(
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(color: Colors.black.withValues(alpha: 0.5)),
+                ),
+              ),
+              CatDetailScreen(cat: cat),
+            ],
           ),
-          CatDetailScreen(cat: cat),
-        ],
-      ),
     );
   }
 
@@ -144,19 +138,20 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_error != null) {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text(_error!),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setState(() => _error = null);
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Error'),
+              content: Text(_error!),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    setState(() => _error = null);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     }
   }
@@ -199,11 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text('$dislikeCount'),
                 const SizedBox(width: 20),
                 IconButton(
-                  icon: const Icon(Icons.favorite, color: Colors.pink),
+                  icon: const Icon(Icons.menu, color: Colors.black),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const LikedCatsScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const LikedCatsScreen(),
+                      ),
                     );
                   },
                 ),
@@ -218,31 +215,49 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               children: [
                 Flexible(
-                  child: _catBuffer.isEmpty && !_isLoading
-                      ? const Center(child: Text('No cats available'))
-                      : CardSwiper(
-                          controller: controller,
-                          cardsCount: _bufferSize,
-                          onSwipe: _onSwipe,
-                          numberOfCardsDisplayed: 3,
-                          backCardOffset: const Offset(40, 40),
-                          padding: const EdgeInsets.all(24.0),
-                          allowedSwipeDirection: const AllowedSwipeDirection.symmetric(
-                            horizontal: true,
+                  child:
+                      _catBuffer.isEmpty
+                          ? const Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                CircularProgressIndicator(),
+                                Text(
+                                  'Загружаем котиков...',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          : CardSwiper(
+                            controller: controller,
+                            cardsCount: _bufferSize,
+                            onSwipe: _onSwipe,
+                            numberOfCardsDisplayed: 3,
+                            backCardOffset: const Offset(40, 40),
+                            padding: const EdgeInsets.all(24.0),
+                            allowedSwipeDirection:
+                                const AllowedSwipeDirection.symmetric(
+                                  horizontal: true,
+                                ),
+                            cardBuilder: (
+                              context,
+                              index,
+                              horizontalThresholdPercentage,
+                              verticalThresholdPercentage,
+                            ) {
+                              final cat = _catBuffer[index];
+                              return GestureDetector(
+                                onTap: () => _onCardTap(cat),
+                                child: CatCard(cat),
+                              );
+                            },
                           ),
-                          cardBuilder: (
-                            context,
-                            index,
-                            horizontalThresholdPercentage,
-                            verticalThresholdPercentage,
-                          ) {
-                            final cat = _catBuffer[index];
-                            return GestureDetector(
-                              onTap: () => _onCardTap(cat),
-                              child: CatCard(cat),
-                            );
-                          },
-                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -259,10 +274,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       DislikeButton(
-                        onPressed: () => controller.swipe(CardSwiperDirection.left),
+                        onPressed:
+                            () => controller.swipe(CardSwiperDirection.left),
                       ),
                       LikeButton(
-                        onPressed: () => controller.swipe(CardSwiperDirection.right),
+                        onPressed:
+                            () => controller.swipe(CardSwiperDirection.right),
                       ),
                       FloatingActionButton(
                         onPressed: _onInfoTap,
@@ -275,8 +292,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            if (_isLoading)
-              const Center(child: CircularProgressIndicator()),
           ],
         ),
       ),

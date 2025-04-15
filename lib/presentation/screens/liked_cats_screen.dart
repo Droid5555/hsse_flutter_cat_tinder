@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,10 @@ class LikedCatsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Liked Cats'),
+        title: const Text(
+          'История лайков',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ),
       body: BlocBuilder<LikedCatsCubit, LikedCatsState>(
         builder: (context, state) {
@@ -23,18 +27,32 @@ class LikedCatsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: DropdownButton<String>(
-                  hint: const Text('Filter by breed'),
+                  hint: const Text('Фильтр по породе'),
                   value: state.selectedBreed,
                   isExpanded: true,
                   items: [
                     const DropdownMenuItem<String>(
                       value: null,
-                      child: Text('All Breeds'),
+                      child: Row(
+                        children: [
+                          Icon(Icons.pets, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text('Все породы'),
+                        ],
+                      ),
                     ),
-                    ...state.breeds.map((breed) => DropdownMenuItem<String>(
-                          value: breed,
-                          child: Text(breed),
-                        )),
+                    ...state.breeds.map(
+                      (breed) => DropdownMenuItem<String>(
+                        value: breed,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.pets, color: Colors.red),
+                            const SizedBox(width: 8),
+                            Text(breed),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                   onChanged: (value) {
                     context.read<LikedCatsCubit>().filterByBreed(value);
@@ -42,38 +60,76 @@ class LikedCatsScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: state.cats.isEmpty
-                    ? const Center(child: Text('No liked cats yet'))
-                    : ListView.builder(
-                        itemCount: state.cats.length,
-                        itemBuilder: (context, index) {
-                          final cat = state.cats[index];
-                          return Dismissible(
-                            key: Key(cat.id),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (_) {
-                              context.read<LikedCatsCubit>().removeLikedCat(cat.id);
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.only(right: 20),
-                              child: const Icon(Icons.delete, color: Colors.white),
+                child:
+                    state.cats.isEmpty
+                        ? const Center(
+                          child: Text(
+                            'Никакой котик тебе не понравился:(',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
                             ),
-                            child: ListTile(
-                              leading: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CatCard(cat),
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: state.cats.length,
+                          itemBuilder: (context, index) {
+                            final cat = state.cats[index];
+                            return Dismissible(
+                              key: Key(cat.id),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (_) {
+                                context.read<LikedCatsCubit>().removeLikedCat(
+                                  cat.id,
+                                );
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 20),
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.black,
+                                ),
                               ),
-                              title: Text(cat.breedName),
-                              subtitle: Text(
-                                'Liked on: ${DateFormat('dd/MM/yyyy').format(cat.likedAt!)}',
+                              child: ListTile(
+                                leading: SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: CachedNetworkImage(
+                                    imageUrl: CatCard(cat).candidate.url,
+                                    placeholder:
+                                        (context, url) => const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                    errorWidget:
+                                        (context, url, error) =>
+                                            const Icon(Icons.error),
+                                    height: double.infinity,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                title: Text(
+                                  cat.breedName,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  DateFormat(
+                                    'dd/MM/yyyy hh:mm',
+                                  ).format(cat.likedAt!),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
               ),
             ],
           );
