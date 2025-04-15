@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../blocs/liked_cats/liked_cats_cubit.dart';
 import '../blocs/liked_cats/liked_cats_state.dart';
+import 'detail_screen.dart';
 
 class LikedCatsScreen extends StatefulWidget {
   const LikedCatsScreen({super.key});
@@ -111,71 +114,101 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
-                              child: Container(
-                                clipBehavior: Clip.hardEdge,
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 1.5,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder:
+                                        (context) => Stack(
+                                          children: [
+                                            GestureDetector(
+                                              onTap:
+                                                  () =>
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pop(),
+                                              child: BackdropFilter(
+                                                filter: ImageFilter.blur(
+                                                  sigmaX: 10,
+                                                  sigmaY: 10,
+                                                ),
+                                                child: Container(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.5),
+                                                ),
+                                              ),
+                                            ),
+                                            CatDetailScreen(cat: cat),
+                                          ],
+                                        ),
+                                  );
+                                },
+                                child: Container(
+                                  clipBehavior: Clip.hardEdge,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 2,
                                   ),
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: .2),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      width: 1.5,
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    CachedNetworkImage(
-                                      imageUrl: cat.url,
-                                      width: 130,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                      placeholder:
-                                          (context, url) => const SizedBox(
-                                            child: Center(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withAlpha(50),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      CachedNetworkImage(
+                                        imageUrl: cat.url,
+                                        width: 130,
+                                        height: 90,
+                                        fit: BoxFit.cover,
+                                        placeholder:
+                                            (context, url) => const Center(
                                               child:
                                                   CircularProgressIndicator(),
                                             ),
-                                          ),
-                                      errorWidget:
-                                          (context, url, error) =>
-                                              const Icon(Icons.error),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            cat.breedName,
-                                            style: const TextStyle(
-                                              fontSize: 23,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            DateFormat(
-                                              'dd/MM/yyyy HH:mm',
-                                            ).format(cat.likedAt!),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
+                                        errorWidget:
+                                            (context, url, error) =>
+                                                const Icon(Icons.error),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              cat.breedName,
+                                              style: const TextStyle(
+                                                fontSize: 23,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              DateFormat(
+                                                'dd/MM/yyyy HH:mm',
+                                              ).format(cat.likedAt!),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
