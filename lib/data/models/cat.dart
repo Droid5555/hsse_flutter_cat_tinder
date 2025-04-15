@@ -18,12 +18,16 @@ class Cat {
   });
 
   factory Cat.fromJson(Map<String, dynamic> json) {
-    final breed = json['breeds'] != null && json['breeds'].isNotEmpty ? json['breeds'][0] : null;
+    final breed =
+        json['breeds'] != null && json['breeds'].isNotEmpty
+            ? json['breeds'][0]
+            : null;
     return Cat(
       id: json['id'],
       url: json['url'],
       breedName: breed != null ? breed['name'] : 'Unknown',
-      description: breed != null ? breed['description'] : 'No description available',
+      description:
+          breed != null ? breed['description'] : 'No description available',
       origin: breed != null ? breed['origin'] : 'Unknown',
       temperament: breed != null ? breed['temperament'] : 'Unknown',
     );

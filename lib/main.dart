@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => di.locator<LikedCatsCubit>()),
-      ],
+      providers: [BlocProvider(create: (_) => di.locator<LikedCatsCubit>())],
       child: MaterialApp(
         title: 'Cat Tinder',
         debugShowCheckedModeBanner: false,
