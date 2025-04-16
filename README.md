@@ -50,9 +50,9 @@
 ### Можно посмотреть детальную информацию, нажав на карточку с котиком. Информацию можно листать. По сравнениюс предыдущей версией, был убран крестик. Теперь выход через нажатие на "черный фон" или свайп вниз.
 ---
 <div style="display: flex;">
-  <img src="assets/screenshots/detail_1.png" width="200" alt="Картинка">&nbsp
-  <img src="assets/screenshots/detail_2.png" width="200" alt="Картинка">&nbsp
-  <img src="assets/screenshots/detail_exit.png" width="200" alt="Картинка">
+  <img src="assets/screenshots/detail_1.png" width="250" alt="Картинка">&nbsp
+  <img src="assets/screenshots/detail_2.png" width="250" alt="Картинка">&nbsp
+  <img src="assets/screenshots/detail_exit.png" width="250" alt="Картинка">
 </div>
 
 ---
