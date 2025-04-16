@@ -71,3 +71,5 @@
 ## 📦 Установка
 
 [Скачать последнюю версию APK](https://disk.yandex.ru/d/ChAB3NQxRC2R4w)
+
+[Скачать СТАРУЮ версию APK](https://disk.yandex.ru/d/iTNL7zLFFgohng)
