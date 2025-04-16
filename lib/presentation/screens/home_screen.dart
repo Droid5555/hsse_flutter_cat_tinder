@@ -162,22 +162,22 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/icon/icon.png', height: 60),
+            Image.asset('assets/icon/icon.png', height: 55),
             const SizedBox(width: 10),
             const Text(
-              'Ca',
+              'Кот',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.red,
-                fontSize: 25,
+                fontSize: 30,
               ),
             ),
             const Text(
-              'Tinder',
+              'олог',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
-                fontSize: 25,
+                color: Colors.green,
+                fontSize: 28,
               ),
             ),
             const Spacer(),

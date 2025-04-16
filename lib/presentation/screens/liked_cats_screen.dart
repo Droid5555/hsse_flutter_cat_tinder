@@ -29,7 +29,7 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'История лайков',
+          'Кладесь котиков',
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -86,7 +86,7 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
                     state.cats.isEmpty
                         ? const Center(
                           child: Text(
-                            'Никакой котик тебе не понравился :(',
+                            'Пока никакой котик тебе не понравился :(',
                             style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         )
