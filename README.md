@@ -60,10 +60,10 @@
 ### Добавлено меню с лайкнутыми котиками. Удалять котиков можно свайпом влево. Также есть фильтр пород, который появляется по нажатию на кнопку. Удаление котиков уменьшает счётчик лайков. Хранение только в рантайме
 ---
 <div style="display: flex;">
-  <img src="assets/screenshots/list.png" width="300" alt="Картинка">&nbsp
-  <img src="assets/screenshots/list_delete.png" width="300" alt="Картинка">&nbsp
-  <img src="assets/screenshots/list_filter.png" width="300" alt="Картинка">&nbsp
-  <img src="assets/screenshots/list_filter_list.png" width="300" alt="Картинка">
+  <img src="assets/screenshots/list.png" width="200" alt="Картинка">&nbsp
+  <img src="assets/screenshots/list_delete.png" width="200" alt="Картинка">&nbsp
+  <img src="assets/screenshots/list_filter.png" width="200" alt="Картинка">&nbsp
+  <img src="assets/screenshots/list_filter_list.png" width="200" alt="Картинка">
 </div>
 
 ---
