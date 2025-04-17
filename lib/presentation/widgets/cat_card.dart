@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../data/models/cat.dart';
+import 'package:cat_tinder/data/models/cat.dart';
 import 'package:flutter/material.dart';
 
 class CatCard extends StatelessWidget {

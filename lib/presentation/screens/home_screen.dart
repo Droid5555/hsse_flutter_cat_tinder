@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'dart:ui';
-import '../../data/models/cat.dart';
-import '../../domain/services/cat_service.dart';
-import '../blocs/liked_cats/liked_cats_state.dart';
-import '../widgets/cat_card.dart';
-import '../widgets/like_button.dart';
-import '../widgets/dislike_button.dart';
+import 'package:cat_tinder/data/models/cat.dart';
+import 'package:cat_tinder/data/services/cat_service.dart';
+import 'package:cat_tinder/presentation/blocs/liked_cats_state.dart';
+import 'package:cat_tinder/presentation/widgets/cat_card.dart';
+import 'package:cat_tinder/presentation/widgets/like_button.dart';
+import 'package:cat_tinder/presentation/widgets/dislike_button.dart';
 import 'detail_screen.dart';
 import 'liked_cats_screen.dart';
-import '../blocs/liked_cats/liked_cats_cubit.dart';
+import 'package:cat_tinder/presentation/blocs/liked_cats_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -128,8 +128,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _onInfoTap() {
-    _onCardTap(_catBuffer[_index]);
+  void _onMenuTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LikedCatsScreen()),
+    );
   }
 
   void _showErrorDialog() {
@@ -192,18 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Icon(Icons.thumb_down, color: Colors.red),
                     const SizedBox(width: 5),
                     Text('$dislikeCount'),
-                    const SizedBox(width: 20),
-                    IconButton(
-                      icon: const Icon(Icons.menu, color: Colors.black),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LikedCatsScreen(),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 );
               },
@@ -220,17 +211,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   child:
                       _catBuffer.isEmpty
                           ? const Center(
-                            child: Row(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 10,
                               children: [
-                                CircularProgressIndicator(),
                                 Text(
                                   'Загружаем котиков...',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 20,
                                     color: Colors.grey,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                SizedBox(
+                                  width: 200,
+                                  child: LinearProgressIndicator(
+                                    minHeight: 3,
+                                    backgroundColor: Colors.black12,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.grey,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -284,10 +283,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             () => controller.swipe(CardSwiperDirection.right),
                       ),
                       FloatingActionButton(
-                        onPressed: _onInfoTap,
+                        onPressed: _onMenuTap,
                         backgroundColor: Colors.transparent,
                         shape: const CircleBorder(),
-                        child: Image.asset('assets/buttons/info.png'),
+                        child: Image.asset('assets/buttons/menu.png'),
                       ),
                     ],
                   ),

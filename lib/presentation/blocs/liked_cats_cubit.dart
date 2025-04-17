@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/models/cat.dart';
+import 'package:cat_tinder/data/models/cat.dart';
 import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
 import 'liked_cats_state.dart';
 

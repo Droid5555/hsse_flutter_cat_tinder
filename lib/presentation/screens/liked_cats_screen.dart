@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../blocs/liked_cats/liked_cats_cubit.dart';
-import '../blocs/liked_cats/liked_cats_state.dart';
+import 'package:cat_tinder/presentation/blocs/liked_cats_cubit.dart';
+import 'package:cat_tinder/presentation/blocs/liked_cats_state.dart';
 import 'detail_screen.dart';
 
 class LikedCatsScreen extends StatefulWidget {
@@ -29,8 +29,8 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Кладесь котиков',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          'Кладезь котиков',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -47,7 +47,10 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
             children: [
               if (_showFilter && state.breeds.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 5.0,
+                  ),
                   child: DropdownButton<String>(
                     hint: const Text('Фильтр по породе'),
                     value: state.selectedBreed,

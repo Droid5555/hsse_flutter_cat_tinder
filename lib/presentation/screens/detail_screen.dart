@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/cat.dart';
+import 'package:cat_tinder/data/models/cat.dart';
 
 class CatDetailScreen extends StatelessWidget {
   final Cat cat;
@@ -14,7 +14,7 @@ class CatDetailScreen extends StatelessWidget {
         top: 100.0,
         left: 16.0,
         right: 16.0,
-        bottom: 150.0,
+        bottom: 120.0,
       ),
       decoration: BoxDecoration(
         color: Colors.white,

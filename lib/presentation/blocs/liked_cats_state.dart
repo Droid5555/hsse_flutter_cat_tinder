@@ -1,4 +1,4 @@
-import '../../../data/models/cat.dart';
+import 'package:cat_tinder/data/models/cat.dart';
 
 class LikedCatsState {
   final List<Cat> cats;
