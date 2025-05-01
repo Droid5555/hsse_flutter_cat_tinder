@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -11,6 +13,7 @@ import 'package:cat_tinder/presentation/widgets/dislike_button.dart';
 import 'package:cat_tinder/data/local/dislike_storage.dart';
 import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
 import 'package:get_it/get_it.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'detail_screen.dart';
 import 'liked_cats_screen.dart';
 import 'package:cat_tinder/presentation/blocs/liked_cats_cubit.dart';
@@ -22,7 +25,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   final List<Cat> _catBuffer = [];
   final List<Cat> _swipedCat = [];
   final int _bufferSize = 10;
@@ -34,18 +38,109 @@ class _HomeScreenState extends State<HomeScreen> {
       GetIt.I<DislikeCounterStorage>();
   final LikedCatsRepository _likedCatsRepository =
       GetIt.I<LikedCatsRepository>();
+  List<ConnectivityResult>? _previousResult;
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 2),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeIn,
+      ),
+    );
     _initializeCounters();
     _loadInitialCats();
+    _monitorConnectivity();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _monitorConnectivity() {
+    Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> result,
+    ) {
+      if (_previousResult != result) {
+        _previousResult = result;
+
+        final hasConnection =
+            result.isNotEmpty && !result.contains(ConnectivityResult.none);
+
+        _showConnectivitySnackBar(hasConnection);
+      }
+    });
+  }
+
+  void _showConnectivitySnackBar(bool isConnected) async {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    _animationController.forward(from: 0);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: SlideTransition(
+          position: _slideAnimation,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.black, width: 2),
+              borderRadius: BorderRadius.circular(7),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isConnected ? Icons.wifi : Icons.wifi_off,
+                  color: isConnected ? Colors.green : Colors.red,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  isConnected ? 'Интернет подключен' : 'Нет интернета',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    // Schedule reverse animation before dismissal
+    await Future.delayed(
+      const Duration(seconds: 3) - const Duration(milliseconds: 400),
+    );
+    if (_animationController.isAnimating || _animationController.isCompleted) {
+      await _animationController.reverse(); // Slide down
+    }
   }
 
   void _initializeCounters() async {
     try {
       final likedCats = await _likedCatsRepository.getLikedCats();
-      context.read<LikedCatsCubit>().setInitialCats(likedCats);
+      if (mounted) {
+        context.read<LikedCatsCubit>().setInitialCats(likedCats);
+      }
     } catch (e) {
       setState(() {
         _error = 'Ошибка при загрузке счетчиков.';
@@ -63,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _error = 'Котики не найдены. Проверьте подключение к интернету.';
       });
+      _showConnectivitySnackBar(false);
     }
   }
 
@@ -76,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _error = 'Котики не найдены. Проверьте подключение к интернету.';
       });
+      _showConnectivitySnackBar(false);
     }
   }
 
