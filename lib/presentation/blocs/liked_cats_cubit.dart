@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cat_tinder/data/models/cat.dart';
 import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
+import 'package:cat_tinder/data/local/dislike_storage.dart';
+import 'package:cat_tinder/domain/di/di.dart';
 import 'liked_cats_state.dart';
 
 class LikedCatsCubit extends Cubit<LikedCatsState> {
@@ -8,31 +10,40 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
 
   LikedCatsCubit(this.repository) : super(const LikedCatsState());
 
-  void loadLikedCats() {
-    final cats = repository.getLikedCats();
-    final breeds = repository.getBreeds();
+  Future<void> setInitialCats(List<Cat> cats) async {
+    emit(LikedCatsState(cats: cats));
+  }
+
+  Future<void> loadLikedCats() async {
+    final cats = await repository.getLikedCats();
+    final breeds = await repository.getBreeds();
     emit(state.copyWith(cats: cats, breeds: breeds, selectedBreed: null));
   }
 
-  void addLikedCat(Cat cat) {
-    repository.addLikedCat(cat);
-    final cats = repository.getLikedCats();
-    final breeds = repository.getBreeds();
+  Future<void> addLikedCat(Cat cat) async {
+    await repository.addLikedCat(cat);
+    final cats = await repository.getLikedCats();
+    final breeds = await repository.getBreeds();
     emit(
       state.copyWith(
         cats:
             state.selectedBreed != null
-                ? repository.filterByBreed(state.selectedBreed)
+                ? await repository.filterByBreed(state.selectedBreed)
                 : cats,
         breeds: breeds,
       ),
     );
   }
 
-  void removeLikedCat(String id, {String? selectedBreed}) {
-    repository.removeLikedCat(id);
-    final newCats = repository.getLikedCats();
-    final newBreeds = repository.getBreeds();
+  Future<void> dislikeCat() async {
+    final dislikeStorage = locator<DislikeCounterStorage>();
+    await dislikeStorage.incrementDislikeCount();
+  }
+
+  Future<void> removeLikedCat(String id, {String? selectedBreed}) async {
+    await repository.removeLikedCat(id);
+    final newCats = await repository.getLikedCats();
+    final newBreeds = await repository.getBreeds();
 
     String? updatedSelectedBreed = selectedBreed;
     if (selectedBreed != null && !newBreeds.contains(selectedBreed)) {
@@ -43,7 +54,7 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
       state.copyWith(
         cats:
             updatedSelectedBreed != null
-                ? repository.filterByBreed(updatedSelectedBreed)
+                ? await repository.filterByBreed(updatedSelectedBreed)
                 : newCats,
         breeds: newBreeds,
         selectedBreed: updatedSelectedBreed,
@@ -51,15 +62,11 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
     );
   }
 
-  void filterByBreed(String? breed) {
-    final newCats = repository.filterByBreed(breed);
-    final newBreeds = repository.getBreeds();
+  Future<void> filterByBreed(String? breed) async {
+    final newCats = await repository.filterByBreed(breed);
+    final newBreeds = await repository.getBreeds();
     emit(
-      state.copyWith(
-        cats: newCats,
-        breeds: newBreeds,
-        selectedBreed: breed,
-      ),
+      state.copyWith(cats: newCats, breeds: newBreeds, selectedBreed: breed),
     );
   }
 }

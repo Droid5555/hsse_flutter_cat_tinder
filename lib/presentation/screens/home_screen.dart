@@ -8,6 +8,9 @@ import 'package:cat_tinder/presentation/blocs/liked_cats_state.dart';
 import 'package:cat_tinder/presentation/widgets/cat_card.dart';
 import 'package:cat_tinder/presentation/widgets/like_button.dart';
 import 'package:cat_tinder/presentation/widgets/dislike_button.dart';
+import 'package:cat_tinder/data/local/dislike_storage.dart';
+import 'package:cat_tinder/domain/repositories/liked_cats_repository.dart';
+import 'package:get_it/get_it.dart';
 import 'detail_screen.dart';
 import 'liked_cats_screen.dart';
 import 'package:cat_tinder/presentation/blocs/liked_cats_cubit.dart';
@@ -25,14 +28,29 @@ class _HomeScreenState extends State<HomeScreen> {
   final int _bufferSize = 10;
   bool isLastLike = false;
   int _index = 0;
-  int dislikeCount = 0;
   final CardSwiperController controller = CardSwiperController();
   String? _error;
+  final DislikeCounterStorage _dislikeStorage =
+      GetIt.I<DislikeCounterStorage>();
+  final LikedCatsRepository _likedCatsRepository =
+      GetIt.I<LikedCatsRepository>();
 
   @override
   void initState() {
     super.initState();
+    _initializeCounters();
     _loadInitialCats();
+  }
+
+  void _initializeCounters() async {
+    try {
+      final likedCats = await _likedCatsRepository.getLikedCats();
+      context.read<LikedCatsCubit>().setInitialCats(likedCats);
+    } catch (e) {
+      setState(() {
+        _error = 'Ошибка при загрузке счетчиков.';
+      });
+    }
   }
 
   void _loadInitialCats() async {
@@ -88,18 +106,18 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<LikedCatsCubit>().addLikedCat(_catBuffer[_index]);
   }
 
-  void _onDislike() {
+  void _onDislike() async {
+    await _dislikeStorage.incrementDislikeCount();
     setState(() {
-      dislikeCount++;
       isLastLike = false;
     });
   }
 
-  void _onUndo() {
+  void _onUndo() async {
     if (isLastLike) {
       context.read<LikedCatsCubit>().removeLikedCat(_swipedCat.last.id);
     } else {
-      dislikeCount--;
+      await _dislikeStorage.decrementDislikeCount();
     }
     setState(() {
       _catBuffer[(_index + 1) % _bufferSize] = _catBuffer[_index];
@@ -184,18 +202,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const Spacer(),
-            BlocBuilder<LikedCatsCubit, LikedCatsState>(
-              builder: (context, state) {
-                return Row(
-                  children: [
-                    const Icon(Icons.thumb_up, color: Colors.green),
-                    const SizedBox(width: 5),
-                    Text('${state.cats.length}'),
-                    const SizedBox(width: 20),
-                    const Icon(Icons.thumb_down, color: Colors.red),
-                    const SizedBox(width: 5),
-                    Text('$dislikeCount'),
-                  ],
+            FutureBuilder<int>(
+              future: _dislikeStorage.getDislikeCount(),
+              builder: (context, snapshot) {
+                final dislikeCount = snapshot.data ?? 0;
+                return BlocBuilder<LikedCatsCubit, LikedCatsState>(
+                  builder: (context, state) {
+                    return Row(
+                      children: [
+                        const Icon(Icons.thumb_up, color: Colors.green),
+                        const SizedBox(width: 5),
+                        Text('${state.cats.length}'),
+                        const SizedBox(width: 20),
+                        const Icon(Icons.thumb_down, color: Colors.red),
+                        const SizedBox(width: 5),
+                        Text('$dislikeCount'),
+                      ],
+                    );
+                  },
                 );
               },
             ),
