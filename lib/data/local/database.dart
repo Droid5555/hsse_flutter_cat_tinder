@@ -8,11 +8,17 @@ part 'database.g.dart';
 
 class CatEntries extends Table {
   TextColumn get id => text()();
+
   TextColumn get url => text()();
+
   TextColumn get breedName => text()();
+
   TextColumn get description => text()();
+
   TextColumn get origin => text()();
+
   TextColumn get temperament => text()();
+
   DateTimeColumn get likedAt => dateTime()();
 
   @override
@@ -22,6 +28,8 @@ class CatEntries extends Table {
 @DriftDatabase(tables: [CatEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+
+  AppDatabase.connect(super.executor);
 
   @override
   int get schemaVersion => 1;

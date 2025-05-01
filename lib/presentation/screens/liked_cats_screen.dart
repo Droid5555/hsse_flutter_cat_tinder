@@ -173,14 +173,16 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
                                     children: [
                                       CachedNetworkImage(
                                         imageUrl: cat.url,
-                                        cacheManager: CustomCacheManager.instance,
+                                        cacheManager:
+                                            CustomCacheManager.instance,
                                         width: 130,
                                         height: 90,
                                         fit: BoxFit.cover,
                                         placeholder:
                                             (context, url) => const Center(
-                                              child:
-                                                  CircularProgressIndicator(strokeAlign: 1,),
+                                              child: CircularProgressIndicator(
+                                                strokeAlign: 1,
+                                              ),
                                             ),
                                         errorWidget:
                                             (context, url, error) =>

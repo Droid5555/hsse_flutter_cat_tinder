@@ -15,24 +15,29 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
   }
 
   Future<void> loadLikedCats() async {
-    final cats = await repository.getLikedCats();
+    final allCats = await repository.getLikedCats();
     final breeds = await repository.getBreeds();
-    emit(state.copyWith(cats: cats, breeds: breeds, selectedBreed: null));
+    emit(
+      state.copyWith(
+        allCats: allCats,
+        cats: allCats,
+        breeds: breeds,
+        selectedBreed: null,
+      ),
+    );
   }
 
   Future<void> addLikedCat(Cat cat) async {
     await repository.addLikedCat(cat);
-    final cats = await repository.getLikedCats();
+    final allCats = await repository.getLikedCats();
     final breeds = await repository.getBreeds();
-    emit(
-      state.copyWith(
-        cats:
-            state.selectedBreed != null
-                ? await repository.filterByBreed(state.selectedBreed)
-                : cats,
-        breeds: breeds,
-      ),
-    );
+
+    final filteredCats =
+        state.selectedBreed != null
+            ? await repository.filterByBreed(state.selectedBreed)
+            : allCats;
+
+    emit(state.copyWith(allCats: allCats, cats: filteredCats, breeds: breeds));
   }
 
   Future<void> dislikeCat() async {
@@ -42,31 +47,35 @@ class LikedCatsCubit extends Cubit<LikedCatsState> {
 
   Future<void> removeLikedCat(String id, {String? selectedBreed}) async {
     await repository.removeLikedCat(id);
-    final newCats = await repository.getLikedCats();
-    final newBreeds = await repository.getBreeds();
+    final allCats = await repository.getLikedCats();
+    final breeds = await repository.getBreeds();
 
     String? updatedSelectedBreed = selectedBreed;
-    if (selectedBreed != null && !newBreeds.contains(selectedBreed)) {
+    if (selectedBreed != null && !breeds.contains(selectedBreed)) {
       updatedSelectedBreed = null;
     }
 
+    final filteredCats =
+        updatedSelectedBreed != null
+            ? await repository.filterByBreed(updatedSelectedBreed)
+            : allCats;
+
     emit(
       state.copyWith(
-        cats:
-            updatedSelectedBreed != null
-                ? await repository.filterByBreed(updatedSelectedBreed)
-                : newCats,
-        breeds: newBreeds,
+        allCats: allCats,
+        cats: filteredCats,
+        breeds: breeds,
         selectedBreed: updatedSelectedBreed,
       ),
     );
   }
 
   Future<void> filterByBreed(String? breed) async {
-    final newCats = await repository.filterByBreed(breed);
-    final newBreeds = await repository.getBreeds();
+    final filteredCats = await repository.filterByBreed(breed);
+    final breeds = await repository.getBreeds();
+
     emit(
-      state.copyWith(cats: newCats, breeds: newBreeds, selectedBreed: breed),
+      state.copyWith(cats: filteredCats, breeds: breeds, selectedBreed: breed),
     );
   }
 }

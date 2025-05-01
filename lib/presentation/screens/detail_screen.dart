@@ -40,11 +40,20 @@ class CatDetailScreen extends StatelessWidget {
               imageUrl: cat.url,
               cacheManager: CustomCacheManager.instance,
               placeholder:
-                  (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
+                  (context, url) => Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(160),
+                      height: 350,
+                      child: const CircularProgressIndicator(),
+                    ),
+                  ),
               errorWidget:
-                  (context, url, error) =>
-                      const Center(child: const Icon(Icons.error, size: 350, color: Colors.grey,)),
+                  (context, url, error) => const Center(
+                    child: SizedBox(
+                      height: 350,
+                      child: Icon(Icons.error, size: 50, color: Colors.grey),
+                    ),
+                  ),
               fit: BoxFit.cover,
             ),
             const SizedBox(height: 7.0),

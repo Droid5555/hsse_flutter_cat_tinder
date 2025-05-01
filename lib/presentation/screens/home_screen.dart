@@ -29,7 +29,9 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final List<Cat> _catBuffer = [];
   final List<Cat> _swipedCat = [];
-  final int _bufferSize = 10;
+  final int _bufferSize = 20;
+  bool _hasConnection = true;
+  bool _loadedInitialCats = false;
   bool _isFirstConnectivityEvent = true;
   bool isLastLike = false;
   int _index = 0;
@@ -78,16 +80,24 @@ class _HomeScreenState extends State<HomeScreen>
       if (_isFirstConnectivityEvent) {
         _isFirstConnectivityEvent = false;
         _previousResult = result;
+        _hasConnection =
+            result.isNotEmpty && !result.contains(ConnectivityResult.none);
         return;
       }
 
       if (_previousResult != result) {
         _previousResult = result;
 
-        final hasConnection =
-            result.isNotEmpty && !result.contains(ConnectivityResult.none);
+        setState(() {
+          _hasConnection =
+              result.isNotEmpty && !result.contains(ConnectivityResult.none);
+        });
 
-        _showConnectivitySnackBar(hasConnection);
+        if (_hasConnection && !_loadedInitialCats) {
+          _loadInitialCats();
+        }
+
+        _showConnectivitySnackBar(_hasConnection);
       }
     });
   }
@@ -159,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen>
       final cats = await CatService().fetchRandomCats(_bufferSize);
       setState(() {
         _catBuffer.addAll(cats);
+        _loadedInitialCats = true;
       });
     } catch (e) {
       setState(() {
@@ -187,18 +198,20 @@ class _HomeScreenState extends State<HomeScreen>
     int? currentIndex,
     CardSwiperDirection direction,
   ) {
-    if (direction == CardSwiperDirection.right) {
-      _onLike();
-    } else {
-      _onDislike();
+    if (_hasConnection) {
+      if (direction == CardSwiperDirection.right) {
+        _onLike();
+      } else {
+        _onDislike();
+      }
+      _index = currentIndex!;
+      if (_swipedCat.isEmpty) {
+        _swipedCat.add(_catBuffer[previousIndex]);
+      } else {
+        _swipedCat[0] = _catBuffer[previousIndex];
+      }
+      _loadCat(previousIndex);
     }
-    _index = currentIndex!;
-    if (_swipedCat.isEmpty) {
-      _swipedCat.add(_catBuffer[previousIndex]);
-    } else {
-      _swipedCat[0] = _catBuffer[previousIndex];
-    }
-    _loadCat(previousIndex);
     return true;
   }
 
@@ -304,6 +317,10 @@ class _HomeScreenState extends State<HomeScreen>
                 fontSize: 28,
               ),
             ),
+            if (!_hasConnection) ...[
+              const SizedBox(width: 10),
+              const Icon(Icons.wifi_off, color: Colors.grey, size: 24),
+            ],
             const Spacer(),
             FutureBuilder<int>(
               future: _dislikeStorage.getDislikeCount(),
@@ -315,11 +332,25 @@ class _HomeScreenState extends State<HomeScreen>
                       children: [
                         const Icon(Icons.thumb_up, color: Colors.green),
                         const SizedBox(width: 5),
-                        Text('${state.cats.length}'),
+                        if (_hasConnection) ...[
+                          Text('${state.allCats.length}'),
+                        ] else ...[
+                          Text(
+                            '${state.allCats.length}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
                         const SizedBox(width: 20),
                         const Icon(Icons.thumb_down, color: Colors.red),
                         const SizedBox(width: 5),
-                        Text('$dislikeCount'),
+                        if (_hasConnection) ...[
+                          Text('$dislikeCount'),
+                        ] else ...[
+                          Text(
+                            '$dislikeCount',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ],
                     );
                   },

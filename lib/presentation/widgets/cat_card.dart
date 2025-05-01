@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cat_tinder/data/models/cat.dart';
 import 'package:flutter/material.dart';
+import 'package:cat_tinder/data/cache_manager/cache_manager.dart';
 
 class CatCard extends StatelessWidget {
   final Cat candidate;
@@ -30,10 +31,21 @@ class CatCard extends StatelessWidget {
           Flexible(
             child: CachedNetworkImage(
               imageUrl: candidate.url,
+              cacheManager: CustomCacheManager.instance,
               placeholder:
-                  (context, url) =>
-                      const Center(child: CircularProgressIndicator(strokeAlign: 1)),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+                  (context, url) => Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(160),
+                      child: const CircularProgressIndicator(),
+                    ),
+                  ),
+              errorWidget:
+                  (context, url, error) => const Center(
+                    child: SizedBox(
+                      height: 350,
+                      child: Icon(Icons.error, size: 50, color: Colors.grey),
+                    ),
+                  ),
               height: double.infinity,
               width: double.infinity,
               fit: BoxFit.cover,

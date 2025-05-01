@@ -24,7 +24,5 @@ class CatService {
       debugPrintStack(stackTrace: stackTrace);
       throw Exception('Не удалось загрузить котиков');
     }
-
-
   }
 }
