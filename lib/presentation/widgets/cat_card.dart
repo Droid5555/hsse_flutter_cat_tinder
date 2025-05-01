@@ -32,7 +32,7 @@ class CatCard extends StatelessWidget {
               imageUrl: candidate.url,
               placeholder:
                   (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
+                      const Center(child: CircularProgressIndicator(strokeAlign: 1)),
               errorWidget: (context, url, error) => const Icon(Icons.error),
               height: double.infinity,
               width: double.infinity,

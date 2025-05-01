@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen>
   final List<Cat> _catBuffer = [];
   final List<Cat> _swipedCat = [];
   final int _bufferSize = 10;
+  bool _isFirstConnectivityEvent = true;
   bool isLastLike = false;
   int _index = 0;
   final CardSwiperController controller = CardSwiperController();
@@ -74,6 +75,12 @@ class _HomeScreenState extends State<HomeScreen>
     Connectivity().onConnectivityChanged.listen((
       List<ConnectivityResult> result,
     ) {
+      if (_isFirstConnectivityEvent) {
+        _isFirstConnectivityEvent = false;
+        _previousResult = result;
+        return;
+      }
+
       if (_previousResult != result) {
         _previousResult = result;
 
@@ -126,12 +133,11 @@ class _HomeScreenState extends State<HomeScreen>
         duration: const Duration(seconds: 3),
       ),
     );
-    // Schedule reverse animation before dismissal
     await Future.delayed(
       const Duration(seconds: 3) - const Duration(milliseconds: 400),
     );
     if (_animationController.isAnimating || _animationController.isCompleted) {
-      await _animationController.reverse(); // Slide down
+      await _animationController.reverse();
     }
   }
 

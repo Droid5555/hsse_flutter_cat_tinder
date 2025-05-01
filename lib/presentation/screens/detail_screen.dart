@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cat_tinder/data/models/cat.dart';
+import 'package:cat_tinder/data/cache_manager/cache_manager.dart';
 
 class CatDetailScreen extends StatelessWidget {
   final Cat cat;
@@ -34,7 +36,17 @@ class CatDetailScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
 
           children: [
-            Image.network(cat.url),
+            CachedNetworkImage(
+              imageUrl: cat.url,
+              cacheManager: CustomCacheManager.instance,
+              placeholder:
+                  (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+              errorWidget:
+                  (context, url, error) =>
+                      const Center(child: const Icon(Icons.error, size: 350, color: Colors.grey,)),
+              fit: BoxFit.cover,
+            ),
             const SizedBox(height: 7.0),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16.0),

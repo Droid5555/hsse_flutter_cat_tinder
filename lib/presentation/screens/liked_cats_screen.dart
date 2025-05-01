@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:cat_tinder/data/cache_manager/cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -173,13 +173,14 @@ class _LikedCatsScreenState extends State<LikedCatsScreen> {
                                     children: [
                                       CachedNetworkImage(
                                         imageUrl: cat.url,
+                                        cacheManager: CustomCacheManager.instance,
                                         width: 130,
                                         height: 90,
                                         fit: BoxFit.cover,
                                         placeholder:
                                             (context, url) => const Center(
                                               child:
-                                                  CircularProgressIndicator(),
+                                                  CircularProgressIndicator(strokeAlign: 1,),
                                             ),
                                         errorWidget:
                                             (context, url, error) =>
