@@ -70,7 +70,7 @@ jobs:
         env:
           YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
         run: |
-          APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
+          APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
           FILENAME="cat-tinder-offline-aleksian-$(date +%Y%m%d-%H%M%S).apk"
           # Ensure the target folder exists (create if it doesn't)
           curl -s -H "Authorization: OAuth $YANDEX_DISK_TOKEN" -X PUT \
