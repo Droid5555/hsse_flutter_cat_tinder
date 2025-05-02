@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   final List<Cat> _catBuffer = [];
   final List<Cat> _swipedCat = [];
-  final int _bufferSize = 20;
+  final int _bufferSize = 30;
   bool _hasConnection = true;
   bool _loadedInitialCats = false;
   bool _isFirstConnectivityEvent = true;

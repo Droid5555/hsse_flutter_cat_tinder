@@ -9,37 +9,37 @@ on:
       - master
 
 jobs:
-#  test:
-#    name: Run Tests
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Set up Flutter
-#        uses: subosito/flutter-action@v2
-#        with:
-#          flutter-version: '3.29.2'
-#          channel: 'stable'
-#
-#      - name: Create .env file
-#        run: |
-#          echo "API_KEY=${{ secrets.API_KEY }}" > .env
-#          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
-#
-#      - name: Install dependencies
-#        run: flutter pub get
-#
-#      - name: Run tests
-#        run: flutter test
-#
-#      - name: Archive test results
-#        if: failure()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: test-results
-#          path: test/
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: 'stable'
+
+      - name: Create .env file
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" > .env
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Archive test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test/
 
   build-and-upload:
     name: Build APK and Upload to Yandex Disk
@@ -71,15 +71,10 @@ jobs:
           YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
         run: |
           APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
-          FILENAME="cat-tinder-offline-aleksian-$(date +%Y%m%d-%H%M%S).apk"
-          # Ensure the target folder exists (create if it doesn't)
-          curl -s -H "Authorization: OAuth $YANDEX_DISK_TOKEN" -X PUT \
-            "https://cloud-api.yandex.net/v1/disk/resources?path=disk:/CatTinderBuilds"
-          # Get upload URL for the file
+          FILENAME="cat_tinder_offline.apk"
           UPLOAD_URL=$(curl -s -H "Authorization: OAuth $YANDEX_DISK_TOKEN" \
             "https://cloud-api.yandex.net/v1/disk/resources/upload?path=disk:/CatTinderBuilds/$FILENAME&overwrite=true" | \
             jq -r '.href')
-          # Upload the file
           curl -s -T "$APK_PATH" -H "Authorization: OAuth $YANDEX_DISK_TOKEN" "$UPLOAD_URL"
 
       # Archive APK as GitHub artifact
