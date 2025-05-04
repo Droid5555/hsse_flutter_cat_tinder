@@ -35,7 +35,7 @@ class CatCard extends StatelessWidget {
               placeholder:
                   (context, url) => Center(
                     child: Container(
-                      padding: const EdgeInsets.all(160),
+                      padding: const EdgeInsets.all(140),
                       child: const CircularProgressIndicator(),
                     ),
                   ),
