@@ -71,7 +71,7 @@ jobs:
           YANDEX_DISK_TOKEN: ${{ secrets.YANDEX_DISK_TOKEN }}
         run: |
           APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
-          FILENAME="cat_tinder_offline.apk"
+          FILENAME="offline_cat_tinder_aleksian.apk"
           UPLOAD_URL=$(curl -s -H "Authorization: OAuth $YANDEX_DISK_TOKEN" \
             "https://cloud-api.yandex.net/v1/disk/resources/upload?path=disk:/CatTinderBuilds/$FILENAME&overwrite=true" | \
             jq -r '.href')
