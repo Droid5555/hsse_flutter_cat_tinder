@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen>
   bool _hasConnection = true;
   bool _loadedInitialCats = false;
   bool _isFirstConnectivityEvent = true;
-  bool isLastLike = false;
+  bool _isLastLike = false;
   int _index = 0;
   int likeCounter = 0;
   final CardSwiperController controller = CardSwiperController();
@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen>
   void _onLike() {
     setState(() {
       ++likeCounter;
-      isLastLike = true;
+      _isLastLike = true;
     });
     context.read<LikedCatsCubit>().addLikedCat(_catBuffer[_index]);
   }
@@ -230,12 +230,12 @@ class _HomeScreenState extends State<HomeScreen>
   void _onDislike() async {
     await _dislikeStorage.incrementDislikeCount();
     setState(() {
-      isLastLike = false;
+      _isLastLike = false;
     });
   }
 
   void _onUndo() async {
-    if (isLastLike) {
+    if (_isLastLike) {
       --likeCounter;
       context.read<LikedCatsCubit>().removeLikedCat(_swipedCat.last.id);
     } else {
@@ -300,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _showErrorDialog());
-
+    _initializeCounters();
     return Scaffold(
       appBar: AppBar(
         title: Row(
